@@ -1,4 +1,4 @@
-package handler;
+package com.haha.im.handler;
 
 import com.google.protobuf.Message;
 import io.netty.channel.ChannelHandlerContext;
