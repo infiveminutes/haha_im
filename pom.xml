@@ -14,6 +14,7 @@
         <module>connector</module>
         <module>user_status</module>
         <module>transfer</module>
+        <module>global_id</module>
     </modules>
 
     <properties>

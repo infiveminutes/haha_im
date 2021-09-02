@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haha.im.dao.UserMsgMaxIdDao" >
+    <resultMap id="BaseResultMap" type="com.haha.im.model.DO.UserMsgMaxIdDo" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="user_id" property="userId" jdbcType="String" />
+        <result column="max_id" property="maxId" jdbcType="BIGINT" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <select id="getByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select id, user_id, max_id, create_time, update_time
+        from t_user_msg_max_id
+        where user_id = #{userId}
+    </select>
+
+    <update id="updateMaxId" parameterType="com.haha.im.model.DO.UserMsgMaxIdDo">
+        update t_user_msg_max_id
+        <set>
+            <if test="maxId != null">
+                max_id = #{maxId}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <insert id="insert" parameterType="com.haha.im.model.DO.UserMsgMaxIdDo">
+        insert ignore into
+            t_user_msg_max_id(user_id, max_id)
+        values(#{userId}, #{maxId})
+    </insert>
+
+
+
+</mapper>
