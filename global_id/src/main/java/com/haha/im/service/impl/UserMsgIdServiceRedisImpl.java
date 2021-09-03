@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-@Service
+//@Service
 public class UserMsgIdServiceRedisImpl implements UserMsgIdService {
 
 

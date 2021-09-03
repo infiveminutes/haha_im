@@ -9,10 +9,10 @@ import redis.clients.jedis.JedisPoolConfig;
 @Configuration
 public class RedisConfig {
 
-    @Value("redis.host")
+    @Value("${redis.host}")
     private String host;
 
-    @Value("redis.port")
+    @Value("${redis.port}")
     private String port;
 
     @Bean

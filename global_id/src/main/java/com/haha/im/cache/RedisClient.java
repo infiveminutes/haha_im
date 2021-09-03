@@ -15,7 +15,7 @@ import java.util.Collections;
 public class RedisClient {
     private Logger logger = LoggerFactory.getLogger(RedisClient.class);
 
-    @Value("redis.lock.expire")
+    @Value("${redis.lock.expire}")
     private String lockExpireMillisecond;
 
     @Autowired

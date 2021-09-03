@@ -7,6 +7,6 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface UserMsgMaxIdDao {
     UserMsgMaxIdDo getByUserId(@Param("userId") String userId);
-    int updateMaxId(UserMsgMaxIdDo userMsgMaxIdDo);
+    int updateMaxId(@Param("userId")String userId, @Param("maxId") Long maxId);
     int insert(UserMsgMaxIdDo userMsgMaxIdDo);
 }

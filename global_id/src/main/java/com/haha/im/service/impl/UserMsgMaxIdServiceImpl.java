@@ -2,7 +2,6 @@ package com.haha.im.service.impl;
 
 import com.haha.im.dao.UserMsgMaxIdDao;
 import com.haha.im.model.DO.UserMsgMaxIdDo;
-import com.haha.im.service.UserMsgIdService;
 import com.haha.im.service.UserMsgMaxIdService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,7 +11,6 @@ public class UserMsgMaxIdServiceImpl implements UserMsgMaxIdService {
 
     @Autowired
     private UserMsgMaxIdDao userMsgMaxIdDao;
-
 
     @Override
     public Long getUserMsgMaxIdFromDb(String userId) {
@@ -31,8 +29,11 @@ public class UserMsgMaxIdServiceImpl implements UserMsgMaxIdService {
     }
 
     @Override
-    public boolean setMaxId(String userId, long maxId) {
-
+    public boolean setMaxId(String userId, Long maxId) {
+        if(userId != null && maxId != null) {
+            userMsgMaxIdDao.updateMaxId(userId, maxId);
+            return true;
+        }
         return false;
     }
 }
