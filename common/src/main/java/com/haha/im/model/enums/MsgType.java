@@ -22,4 +22,13 @@ public enum MsgType {
         return msg;
     }
 
+    public static MsgType code2Enum(int code) {
+        for(MsgType t: MsgType.values()) {
+            if(t.getCode() == code) {
+                return t;
+            }
+        }
+        return null;
+    }
+
 }

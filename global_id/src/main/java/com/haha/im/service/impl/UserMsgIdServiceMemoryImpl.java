@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,6 +19,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * 只支持单机部署
  */
 @Service
+@ConditionalOnProperty(prefix = "user_msg_id", name = "next_id_impl", havingValue = "memory")
 public class UserMsgIdServiceMemoryImpl implements UserMsgIdService {
 
     private Logger logger = LoggerFactory.getLogger(UserMsgIdServiceMemoryImpl.class);

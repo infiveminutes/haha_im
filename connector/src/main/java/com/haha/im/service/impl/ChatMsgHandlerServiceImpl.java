@@ -36,7 +36,7 @@ public class ChatMsgHandlerServiceImpl implements MsgHandlerService {
     }
 
     private void sendChatMsg(Msg.ChatMsg chat, Connect conn) {
-        Msg.ChatMsg.newBuilder().mergeFrom(chat).setId()
+        conn.sendMsg(chat);
     }
 
     public Class<? extends Message> handleMsgClazz() {
