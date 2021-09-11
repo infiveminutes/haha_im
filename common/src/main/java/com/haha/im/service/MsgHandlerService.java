@@ -10,7 +10,7 @@ public interface MsgHandlerService {
      * @param msg
      * @return
      */
-    Proto handlerMsg(Message msg);
+    Proto handleMsg(Message msg);
 
     Class<? extends Message> handleMsgClazz();
 

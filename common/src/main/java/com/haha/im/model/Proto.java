@@ -56,6 +56,11 @@ public class Proto<T> {
         return new Proto<T>(OK_CODE, OK_MSG, t);
     }
 
+    public static Proto creatError(String msg) {
+        return new Proto(ERROR_CODE, msg);
+    }
+
+
     @Override
     public String toString() {
         return "Proto{" +

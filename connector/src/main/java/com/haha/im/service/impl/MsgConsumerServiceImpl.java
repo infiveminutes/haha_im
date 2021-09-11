@@ -10,6 +10,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +21,7 @@ public class MsgConsumerServiceImpl implements MsgConsumerService, InitializingB
     @Autowired
     private List<MsgHandlerService> msgHandlerServiceList;
 
-    private Map<Class<? extends Message>, MsgHandlerService> msgClazz2handler;
+    private Map<Class<? extends Message>, MsgHandlerService> msgClazz2handler = new HashMap<Class<? extends Message>, MsgHandlerService>();
 
     public void afterPropertiesSet() throws Exception {
         for(MsgHandlerService msgHandlerService: msgHandlerServiceList) {
@@ -44,11 +45,11 @@ public class MsgConsumerServiceImpl implements MsgConsumerService, InitializingB
 
     public Proto process(Message msg) {
         if(!checkMsg(msg)) {
-            // 未找到处理此msg类型的handler
+            // handler not defined
             logger.error("process, not found msg type, {}", msg);
             return Proto.ERROR;
         }
-        return msgClazz2handler.get(msg.getClass()).handlerMsg(msg);
+        return msgClazz2handler.get(msg.getClass()).handleMsg(msg);
     }
 
 
