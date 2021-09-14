@@ -2,6 +2,7 @@ package com.haha.im.connect.impl;
 
 import com.haha.im.connect.Connect;
 import com.haha.im.connect.ConnectManager;
+import io.netty.channel.ChannelHandlerContext;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -63,5 +64,13 @@ public class MemoryConnectManager implements ConnectManager {
         userId2NetId.remove(userId);
         netId2Conn.remove(netId);
         conn.close();
+    }
+
+    public Connect getConn(ChannelHandlerContext ctx) {
+        String netId = ctx.channel().attr(Connect.NetId).get();
+        if(netId == null) {
+            return null;
+        }
+        return netId2Conn.get(netId);
     }
 }

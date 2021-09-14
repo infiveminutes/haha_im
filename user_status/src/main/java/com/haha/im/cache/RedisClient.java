@@ -96,6 +96,10 @@ public class RedisClient {
      * @return
      */
     public boolean unlock(String key, String id) {
+        return casDel(key, id);
+    }
+
+    public boolean casDel(String key, String id) {
         Jedis jedis = null;
         try{
             jedis = jedisPool.getResource();

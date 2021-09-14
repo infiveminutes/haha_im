@@ -6,7 +6,7 @@ import com.haha.im.connect.ConnectManager;
 import com.haha.im.handler.ConnectorTransferHandler;
 import com.haha.im.model.Proto;
 import com.haha.im.model.protobuf.Msg;
-import com.haha.im.service.MsgHandlerService;
+import com.haha.im.service.AbstractMsgHandlerService;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ChatMsgHandlerServiceImpl implements MsgHandlerService {
+public class ChatMsgHandlerServiceImpl extends AbstractMsgHandlerService {
 
-    private Logger logger = LoggerFactory.getLogger(ChatMsgHandlerServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(ChatMsgHandlerServiceImpl.class);
 
     @Autowired
     private ConnectManager connectManager;
@@ -28,7 +28,10 @@ public class ChatMsgHandlerServiceImpl implements MsgHandlerService {
      * @param msg extend message.ack
      * @return
      */
-    public Proto handleMsg(Message msg) {
+    public Proto handleMsg(Message msg, ChannelHandlerContext ctx) {
+        if(!checkStep(msg)) {
+            return Proto.creatError("step over limit: " + getStep(msg));
+        }
         String destId = getDestId(msg);
         Connect connect = connectManager.getConn(destId);
         if(connect == null) {
@@ -49,6 +52,10 @@ public class ChatMsgHandlerServiceImpl implements MsgHandlerService {
 
     protected String getDestId(Message msg) {
         return String.valueOf(((Msg.ChatMsg) msg).getDestId());
+    }
+
+    protected int getStep(Message msg) {
+        return ((Msg.ChatMsg)msg).getStep();
     }
 
     public Class<? extends Message> handleMsgClazz() {

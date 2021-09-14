@@ -22,7 +22,7 @@ import java.util.concurrent.locks.ReentrantLock;
 @ConditionalOnProperty(prefix = "user_msg_id", name = "next_id_impl", havingValue = "memory")
 public class UserMsgIdServiceMemoryImpl implements UserMsgIdService {
 
-    private Logger logger = LoggerFactory.getLogger(UserMsgIdServiceMemoryImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserMsgIdServiceMemoryImpl.class);
 
     @Value("${msgid.increase_step}")
     private long step;

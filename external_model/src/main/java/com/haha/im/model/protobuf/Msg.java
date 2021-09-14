@@ -38,7 +38,12 @@ public final class Msg {
     long getCreateTime();
 
     /**
-     * <code>optional bytes msgBody = 5;</code>
+     * <code>optional int32 step = 5;</code>
+     */
+    int getStep();
+
+    /**
+     * <code>optional bytes msgBody = 6;</code>
      */
     com.google.protobuf.ByteString getMsgBody();
   }
@@ -58,6 +63,7 @@ public final class Msg {
       fromId_ = 0L;
       destId_ = 0L;
       createTime_ = 0L;
+      step_ = 0;
       msgBody_ = com.google.protobuf.ByteString.EMPTY;
     }
 
@@ -106,7 +112,12 @@ public final class Msg {
               createTime_ = input.readInt64();
               break;
             }
-            case 42: {
+            case 40: {
+
+              step_ = input.readInt32();
+              break;
+            }
+            case 50: {
 
               msgBody_ = input.readBytes();
               break;
@@ -170,10 +181,19 @@ public final class Msg {
       return createTime_;
     }
 
-    public static final int MSGBODY_FIELD_NUMBER = 5;
+    public static final int STEP_FIELD_NUMBER = 5;
+    private int step_;
+    /**
+     * <code>optional int32 step = 5;</code>
+     */
+    public int getStep() {
+      return step_;
+    }
+
+    public static final int MSGBODY_FIELD_NUMBER = 6;
     private com.google.protobuf.ByteString msgBody_;
     /**
-     * <code>optional bytes msgBody = 5;</code>
+     * <code>optional bytes msgBody = 6;</code>
      */
     public com.google.protobuf.ByteString getMsgBody() {
       return msgBody_;
@@ -203,8 +223,11 @@ public final class Msg {
       if (createTime_ != 0L) {
         output.writeInt64(4, createTime_);
       }
+      if (step_ != 0) {
+        output.writeInt32(5, step_);
+      }
       if (!msgBody_.isEmpty()) {
-        output.writeBytes(5, msgBody_);
+        output.writeBytes(6, msgBody_);
       }
     }
 
@@ -229,9 +252,13 @@ public final class Msg {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(4, createTime_);
       }
+      if (step_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(5, step_);
+      }
       if (!msgBody_.isEmpty()) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(5, msgBody_);
+          .computeBytesSize(6, msgBody_);
       }
       memoizedSize = size;
       return size;
@@ -257,6 +284,8 @@ public final class Msg {
           == other.getDestId());
       result = result && (getCreateTime()
           == other.getCreateTime());
+      result = result && (getStep()
+          == other.getStep());
       result = result && getMsgBody()
           .equals(other.getMsgBody());
       return result;
@@ -281,6 +310,8 @@ public final class Msg {
       hash = (37 * hash) + CREATETIME_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getCreateTime());
+      hash = (37 * hash) + STEP_FIELD_NUMBER;
+      hash = (53 * hash) + getStep();
       hash = (37 * hash) + MSGBODY_FIELD_NUMBER;
       hash = (53 * hash) + getMsgBody().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
@@ -409,6 +440,8 @@ public final class Msg {
 
         createTime_ = 0L;
 
+        step_ = 0;
+
         msgBody_ = com.google.protobuf.ByteString.EMPTY;
 
         return this;
@@ -437,6 +470,7 @@ public final class Msg {
         result.fromId_ = fromId_;
         result.destId_ = destId_;
         result.createTime_ = createTime_;
+        result.step_ = step_;
         result.msgBody_ = msgBody_;
         onBuilt();
         return result;
@@ -490,6 +524,9 @@ public final class Msg {
         }
         if (other.getCreateTime() != 0L) {
           setCreateTime(other.getCreateTime());
+        }
+        if (other.getStep() != 0) {
+          setStep(other.getStep());
         }
         if (other.getMsgBody() != com.google.protobuf.ByteString.EMPTY) {
           setMsgBody(other.getMsgBody());
@@ -624,15 +661,41 @@ public final class Msg {
         return this;
       }
 
+      private int step_ ;
+      /**
+       * <code>optional int32 step = 5;</code>
+       */
+      public int getStep() {
+        return step_;
+      }
+      /**
+       * <code>optional int32 step = 5;</code>
+       */
+      public Builder setStep(int value) {
+        
+        step_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int32 step = 5;</code>
+       */
+      public Builder clearStep() {
+        
+        step_ = 0;
+        onChanged();
+        return this;
+      }
+
       private com.google.protobuf.ByteString msgBody_ = com.google.protobuf.ByteString.EMPTY;
       /**
-       * <code>optional bytes msgBody = 5;</code>
+       * <code>optional bytes msgBody = 6;</code>
        */
       public com.google.protobuf.ByteString getMsgBody() {
         return msgBody_;
       }
       /**
-       * <code>optional bytes msgBody = 5;</code>
+       * <code>optional bytes msgBody = 6;</code>
        */
       public Builder setMsgBody(com.google.protobuf.ByteString value) {
         if (value == null) {
@@ -644,7 +707,7 @@ public final class Msg {
         return this;
       }
       /**
-       * <code>optional bytes msgBody = 5;</code>
+       * <code>optional bytes msgBody = 6;</code>
        */
       public Builder clearMsgBody() {
         
@@ -731,7 +794,12 @@ public final class Msg {
     long getCreateTime();
 
     /**
-     * <code>optional uint64 ackMsgId = 6;</code>
+     * <code>optional int32 step = 6;</code>
+     */
+    int getStep();
+
+    /**
+     * <code>optional uint64 ackMsgId = 7;</code>
      */
     long getAckMsgId();
   }
@@ -752,6 +820,7 @@ public final class Msg {
       destId_ = 0L;
       msgType_ = 0;
       createTime_ = 0L;
+      step_ = 0;
       ackMsgId_ = 0L;
     }
 
@@ -806,6 +875,11 @@ public final class Msg {
               break;
             }
             case 48: {
+
+              step_ = input.readInt32();
+              break;
+            }
+            case 56: {
 
               ackMsgId_ = input.readUInt64();
               break;
@@ -878,10 +952,19 @@ public final class Msg {
       return createTime_;
     }
 
-    public static final int ACKMSGID_FIELD_NUMBER = 6;
+    public static final int STEP_FIELD_NUMBER = 6;
+    private int step_;
+    /**
+     * <code>optional int32 step = 6;</code>
+     */
+    public int getStep() {
+      return step_;
+    }
+
+    public static final int ACKMSGID_FIELD_NUMBER = 7;
     private long ackMsgId_;
     /**
-     * <code>optional uint64 ackMsgId = 6;</code>
+     * <code>optional uint64 ackMsgId = 7;</code>
      */
     public long getAckMsgId() {
       return ackMsgId_;
@@ -914,8 +997,11 @@ public final class Msg {
       if (createTime_ != 0L) {
         output.writeInt64(5, createTime_);
       }
+      if (step_ != 0) {
+        output.writeInt32(6, step_);
+      }
       if (ackMsgId_ != 0L) {
-        output.writeUInt64(6, ackMsgId_);
+        output.writeUInt64(7, ackMsgId_);
       }
     }
 
@@ -944,9 +1030,13 @@ public final class Msg {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(5, createTime_);
       }
+      if (step_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(6, step_);
+      }
       if (ackMsgId_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeUInt64Size(6, ackMsgId_);
+          .computeUInt64Size(7, ackMsgId_);
       }
       memoizedSize = size;
       return size;
@@ -974,6 +1064,8 @@ public final class Msg {
           == other.getMsgType());
       result = result && (getCreateTime()
           == other.getCreateTime());
+      result = result && (getStep()
+          == other.getStep());
       result = result && (getAckMsgId()
           == other.getAckMsgId());
       return result;
@@ -1000,6 +1092,8 @@ public final class Msg {
       hash = (37 * hash) + CREATETIME_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getCreateTime());
+      hash = (37 * hash) + STEP_FIELD_NUMBER;
+      hash = (53 * hash) + getStep();
       hash = (37 * hash) + ACKMSGID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getAckMsgId());
@@ -1131,6 +1225,8 @@ public final class Msg {
 
         createTime_ = 0L;
 
+        step_ = 0;
+
         ackMsgId_ = 0L;
 
         return this;
@@ -1160,6 +1256,7 @@ public final class Msg {
         result.destId_ = destId_;
         result.msgType_ = msgType_;
         result.createTime_ = createTime_;
+        result.step_ = step_;
         result.ackMsgId_ = ackMsgId_;
         onBuilt();
         return result;
@@ -1216,6 +1313,9 @@ public final class Msg {
         }
         if (other.getCreateTime() != 0L) {
           setCreateTime(other.getCreateTime());
+        }
+        if (other.getStep() != 0) {
+          setStep(other.getStep());
         }
         if (other.getAckMsgId() != 0L) {
           setAckMsgId(other.getAckMsgId());
@@ -1376,15 +1476,41 @@ public final class Msg {
         return this;
       }
 
+      private int step_ ;
+      /**
+       * <code>optional int32 step = 6;</code>
+       */
+      public int getStep() {
+        return step_;
+      }
+      /**
+       * <code>optional int32 step = 6;</code>
+       */
+      public Builder setStep(int value) {
+        
+        step_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int32 step = 6;</code>
+       */
+      public Builder clearStep() {
+        
+        step_ = 0;
+        onChanged();
+        return this;
+      }
+
       private long ackMsgId_ ;
       /**
-       * <code>optional uint64 ackMsgId = 6;</code>
+       * <code>optional uint64 ackMsgId = 7;</code>
        */
       public long getAckMsgId() {
         return ackMsgId_;
       }
       /**
-       * <code>optional uint64 ackMsgId = 6;</code>
+       * <code>optional uint64 ackMsgId = 7;</code>
        */
       public Builder setAckMsgId(long value) {
         
@@ -1393,7 +1519,7 @@ public final class Msg {
         return this;
       }
       /**
-       * <code>optional uint64 ackMsgId = 6;</code>
+       * <code>optional uint64 ackMsgId = 7;</code>
        */
       public Builder clearAckMsgId() {
         
@@ -2263,15 +2389,16 @@ public final class Msg {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\rmessage.proto\"Z\n\007ChatMsg\022\n\n\002id\030\001 \001(\004\022\016" +
+      "\n\rmessage.proto\"h\n\007ChatMsg\022\n\n\002id\030\001 \001(\004\022\016" +
       "\n\006fromId\030\002 \001(\004\022\016\n\006destId\030\003 \001(\004\022\022\n\ncreate" +
-      "Time\030\004 \001(\003\022\017\n\007msgBody\030\005 \001(\014\"k\n\006AckMsg\022\n\n" +
-      "\002id\030\001 \001(\004\022\016\n\006fromId\030\002 \001(\004\022\016\n\006destId\030\003 \001(" +
-      "\004\022\017\n\007msgType\030\004 \001(\005\022\022\n\ncreateTime\030\005 \001(\003\022\020" +
-      "\n\010ackMsgId\030\006 \001(\004\"k\n\013InternalMsg\022\n\n\002id\030\001 " +
-      "\001(\004\022\014\n\004from\030\002 \001(\005\022\014\n\004dest\030\003 \001(\005\022\022\n\ncreat" +
-      "eTime\030\004 \001(\003\022\017\n\007msgType\030\005 \001(\005\022\017\n\007msgBody\030" +
-      "\006 \001(\014B\005B\003Msgb\006proto3"
+      "Time\030\004 \001(\003\022\014\n\004step\030\005 \001(\005\022\017\n\007msgBody\030\006 \001(" +
+      "\014\"y\n\006AckMsg\022\n\n\002id\030\001 \001(\004\022\016\n\006fromId\030\002 \001(\004\022" +
+      "\016\n\006destId\030\003 \001(\004\022\017\n\007msgType\030\004 \001(\005\022\022\n\ncrea" +
+      "teTime\030\005 \001(\003\022\014\n\004step\030\006 \001(\005\022\020\n\010ackMsgId\030\007" +
+      " \001(\004\"k\n\013InternalMsg\022\n\n\002id\030\001 \001(\004\022\014\n\004from\030" +
+      "\002 \001(\005\022\014\n\004dest\030\003 \001(\005\022\022\n\ncreateTime\030\004 \001(\003\022" +
+      "\017\n\007msgType\030\005 \001(\005\022\017\n\007msgBody\030\006 \001(\014B\005B\003Msg" +
+      "b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -2290,13 +2417,13 @@ public final class Msg {
     internal_static_ChatMsg_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ChatMsg_descriptor,
-        new java.lang.String[] { "Id", "FromId", "DestId", "CreateTime", "MsgBody", });
+        new java.lang.String[] { "Id", "FromId", "DestId", "CreateTime", "Step", "MsgBody", });
     internal_static_AckMsg_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_AckMsg_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_AckMsg_descriptor,
-        new java.lang.String[] { "Id", "FromId", "DestId", "MsgType", "CreateTime", "AckMsgId", });
+        new java.lang.String[] { "Id", "FromId", "DestId", "MsgType", "CreateTime", "Step", "AckMsgId", });
     internal_static_InternalMsg_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_InternalMsg_fieldAccessorTable = new

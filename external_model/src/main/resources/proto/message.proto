@@ -8,7 +8,8 @@ message ChatMsg{
     uint64 fromId = 2;
     uint64 destId = 3;
     int64 createTime = 4;
-    bytes msgBody = 5;
+    int32 step = 5;
+    bytes msgBody = 6;
 }
 
 message AckMsg {
@@ -17,7 +18,8 @@ message AckMsg {
     uint64 destId = 3;
     int32 msgType = 4;
     int64 createTime = 5;
-    uint64 ackMsgId = 6;
+    int32 step = 6;
+    uint64 ackMsgId = 7;
 }
 
 message InternalMsg{

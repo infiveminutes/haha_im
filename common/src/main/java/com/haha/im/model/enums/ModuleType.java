@@ -1,11 +1,12 @@
 package com.haha.im.model.enums;
 
-public enum ModelType {
+public enum ModuleType {
 
     CONNECTOR(0, "connector"),
-    TRANSFER(1, "transfer");
+    TRANSFER(1, "transfer"),
+    CLIENT(2, "client");
 
-    ModelType(int code, String msg) {
+    ModuleType(int code, String msg) {
         this.code = code;
         this.msg = msg;
     }

@@ -4,6 +4,7 @@ import com.google.protobuf.Message;
 import com.haha.im.model.Proto;
 import com.haha.im.service.MsgConsumerService;
 import com.haha.im.service.MsgHandlerService;
+import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -16,7 +17,7 @@ import java.util.Map;
 
 @Service
 public class MsgConsumerServiceImpl implements MsgConsumerService, InitializingBean {
-    private Logger logger = LoggerFactory.getLogger(MsgConsumerServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(MsgConsumerServiceImpl.class);
 
     @Autowired
     private List<MsgHandlerService> msgHandlerServiceList;
@@ -43,13 +44,13 @@ public class MsgConsumerServiceImpl implements MsgConsumerService, InitializingB
         return msgClazz2handler.containsKey(msg.getClass());
     }
 
-    public Proto process(Message msg) {
+    public Proto process(Message msg, ChannelHandlerContext ctx) {
         if(!checkMsg(msg)) {
             // handler not defined
             logger.error("process, not found msg type, {}", msg);
             return Proto.ERROR;
         }
-        return msgClazz2handler.get(msg.getClass()).handleMsg(msg);
+        return msgClazz2handler.get(msg.getClass()).handleMsg(msg, ctx);
     }
 
 

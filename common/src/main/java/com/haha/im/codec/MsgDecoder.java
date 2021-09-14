@@ -24,7 +24,7 @@ public class MsgDecoder extends ByteToMessageDecoder {
     @Autowired
     private ParseService parseService;
 
-    private Logger logger = LoggerFactory.getLogger(MsgDecoder.class);
+    private static final Logger logger = LoggerFactory.getLogger(MsgDecoder.class);
 
     @Override
     protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf, List<Object> list) throws Exception {

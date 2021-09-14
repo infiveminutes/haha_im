@@ -16,7 +16,7 @@ import java.util.Optional;
 
 public class MsgEncoder extends MessageToByteEncoder<Message> {
 
-    private Logger logger = LoggerFactory.getLogger(MsgEncoder.class);
+    private static final Logger logger = LoggerFactory.getLogger(MsgEncoder.class);
 
     private static final Map<Class<? extends Message>, MsgType> msg2type;
 

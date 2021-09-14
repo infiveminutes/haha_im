@@ -11,10 +11,7 @@ import org.slf4j.LoggerFactory;
 
 public class NettyChannelConnect implements Connect {
 
-    private Logger logger = LoggerFactory.getLogger(NettyChannelConnect.class);
-
-    private static final AttributeKey<String> NetId = AttributeKey.newInstance("net_id");
-
+    private static final Logger logger = LoggerFactory.getLogger(NettyChannelConnect.class);
     private String netId;
     private String userId;
     private ChannelHandlerContext ctx;

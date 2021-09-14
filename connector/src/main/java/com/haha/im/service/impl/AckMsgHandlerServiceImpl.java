@@ -9,11 +9,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class AckMsgHandlerServiceImpl extends ChatMsgHandlerServiceImpl {
 
-    private Logger logger = LoggerFactory.getLogger(AckMsgHandlerServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(AckMsgHandlerServiceImpl.class);
 
     @Override
     protected String getDestId(Message msg) {
         return String.valueOf(((Msg.AckMsg) msg).getDestId());
+    }
+
+    @Override
+    protected int getStep(Message msg) {
+        return ((Msg.AckMsg)msg).getStep();
     }
 
     public Class<? extends Message> handleMsgClazz() {
