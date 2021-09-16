@@ -15,6 +15,7 @@
         <module>user_status</module>
         <module>transfer</module>
         <module>global_id</module>
+        <module>client</module>
     </modules>
 
     <properties>
@@ -72,6 +73,14 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.8.1</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.78</version>
+        </dependency>
+
 
 
     </dependencies>

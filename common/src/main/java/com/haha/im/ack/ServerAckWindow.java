@@ -17,6 +17,9 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * thread safe
+ */
 public class ServerAckWindow {
     private static final Logger logger = LoggerFactory.getLogger(ServerAckWindow.class);
 
@@ -34,13 +37,15 @@ public class ServerAckWindow {
     private ReentrantLock lock;
     private Long timeout;  // millisecond
     private String netId;
+    private Integer retry;
 
-    public ServerAckWindow(String netId, Integer windowSize, Long timeout) {
+    public ServerAckWindow(String netId, Integer windowSize, Long timeout, Integer retry) {
         this.windowSize = windowSize;
         this.timeout = timeout;
         this.reqId2Task = new HashMap<>();
         this.lock = new ReentrantLock();
         this.netId = netId;
+        this.retry = retry;
 
         netId2AckWindow.put(netId, this);
     }
@@ -57,10 +62,14 @@ public class ServerAckWindow {
                 exceptionFuture.completeExceptionally(new AckWindowFullException(netId));
                 return exceptionFuture;
             }
-            SendMsgTask<Msg.InternalMsg> task = new SendMsgTask<>(msg, ctx::writeAndFlush);
-            CompletableFuture<Msg.InternalMsg> future = task.process();
+            SendMsgTask<Msg.InternalMsg> task = new SendMsgTask<>(msg, ctx::writeAndFlush, retry);
+            boolean processSuc = task.process();
+            if(!processSuc) {
+                exceptionFuture.completeExceptionally(new Exception("retry over time"));
+                return exceptionFuture;
+            }
             reqId2Task.put(String.valueOf(msg.getId()), task);
-            return future;
+            return task.getFuture();
         }catch (Exception e) {
             logger.error("offer error", e);
             exceptionFuture.completeExceptionally(e);

@@ -1,6 +1,7 @@
-package com.haha.im.start;
+package com.haha.im;
 
 import com.haha.im.ioc.ConnectorIocConfig;
+import com.haha.im.start.ConnectorServer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -8,8 +9,6 @@ public class main {
     public static void main(String[] args) {
         ApplicationContext applicationContext =
                 new AnnotationConfigApplicationContext(ConnectorIocConfig.class);
-        Object o = applicationContext.getBean("snowFlakeWorker");
-        o = applicationContext.getBean("IDGenManager");
-        System.out.println(o);
+        ConnectorServer.start(9098, applicationContext);
     }
 }

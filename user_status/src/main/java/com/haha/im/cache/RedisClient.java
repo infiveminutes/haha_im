@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -12,10 +13,11 @@ import redis.clients.jedis.params.SetParams;
 import java.util.Collections;
 
 @Component
+@PropertySource( value = "classpath:application.properties")
 public class RedisClient {
     private static final Logger logger = LoggerFactory.getLogger(RedisClient.class);
 
-    @Value("${redis.lock.expire}")
+    @Value("${user_status.redis.lock.expire}")
     private String lockExpireMillisecond;
 
     @Autowired

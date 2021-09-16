@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static com.haha.im.connect.Connect.NetId;
+
 @Service
 public class InternalMsgHandlerServiceImpl extends AbstractMsgHandlerService {
 
@@ -36,8 +38,15 @@ public class InternalMsgHandlerServiceImpl extends AbstractMsgHandlerService {
         if(!checkMsg(internalMsg)) {
             return Proto.creatError("check internal msg fail");
         }
-        String userId = internalMsg.getMsgBody().toStringUtf8();
-        return null;
+        if(internalMsg.getMsgType() == MsgMeanType.ACK.getCode()) {
+            handleAckMsg(internalMsg, ctx);
+        }else if(internalMsg.getMsgType() == MsgMeanType.INIT.getCode()) {
+            handleInitMsg(internalMsg, ctx);
+        }else {
+            logger.error("handleMsg can't handle this msgMeanType:" + internalMsg.getMsgType());
+            return Proto.creatError("InternalMsgHandlerServiceImpl msgMeanType error: " + internalMsg.getMsgType());
+        }
+        return Proto.OK;
     }
 
     public Class<? extends Message> handleMsgClazz() {
@@ -62,11 +71,9 @@ public class InternalMsgHandlerServiceImpl extends AbstractMsgHandlerService {
     private Proto handleAckMsg(Msg.InternalMsg msg, ChannelHandlerContext ctx) {
         // receive ack msg from transfer
         // receive this msg only if connector send a init msg to transfer
-        Connect conn = connectManager.getConn(ctx);
-        if(conn == null) {
-            return Proto.creatError()
-        }
-        ServerAckWindow.getAckWindowByNetId()
+        ServerAckWindow serverAckWindow = ServerAckWindow.getAckWindowByNetId(ctx.channel().attr(NetId).get());
+        serverAckWindow.ack(msg);
+        return Proto.OK;
     }
 
     private boolean checkMsg(Msg.InternalMsg msg) {

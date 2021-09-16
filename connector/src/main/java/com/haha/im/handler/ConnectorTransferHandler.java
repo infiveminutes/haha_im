@@ -7,16 +7,25 @@ import com.haha.im.connect.Connect;
 import com.haha.im.model.enums.ModuleType;
 import com.haha.im.model.enums.MsgMeanType;
 import com.haha.im.model.protobuf.Msg;
+import com.haha.im.service.MsgConsumerService;
 import com.haha.im.utils.IDGenService;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.util.AttributeKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 import java.util.concurrent.*;
 
+@Service
+@Scope("prototype")
 public class ConnectorTransferHandler extends SimpleChannelInboundHandler<Message> {
+    // 多例
+
+    @Autowired
+    private MsgConsumerService msgConsumerService;
 
     private static final Logger logger = LoggerFactory.getLogger(ConnectorTransferHandler.class);
 
@@ -30,18 +39,18 @@ public class ConnectorTransferHandler extends SimpleChannelInboundHandler<Messag
     private ServerAckWindow serverAckWindow;
 
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Message message) throws Exception {
-
+        msgConsumerService.process(message, channelHandlerContext);
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         String netId = String.valueOf(IDGenService.getNextNetId());
-        serverAckWindow = new ServerAckWindow(netId, 5, 5000L);
+        serverAckWindow = new ServerAckWindow(netId, 5, 5000L, 3);
         ctx.channel().attr(Connect.NetId).set(netId);
         netId2ctx.put(netId, ctx);
         logger.info("channel active connector and transfer, netId:" + netId);
         // this netId will not be used until the server return ack
-        Msg.InternalMsg msg = buildInitMsg(CONNECTOR_ID);
+        Msg.InternalMsg msg = buildInitMsg();
         CompletableFuture<Msg.InternalMsg> f = serverAckWindow.offer(msg, ctx);
         f.thenRunAsync(()->netIdList.add(netId), executor);
         super.channelActive(ctx);
@@ -57,26 +66,29 @@ public class ConnectorTransferHandler extends SimpleChannelInboundHandler<Messag
         super.channelInactive(ctx);
     }
 
-    private Msg.InternalMsg buildInitMsg(String connectorId) {
+    private Msg.InternalMsg buildInitMsg() {
         return Msg.InternalMsg.newBuilder()
                 .setId(IDGenService.getSnowFlakeId())
                 .setFrom(ModuleType.CONNECTOR.getCode())
                 .setDest(ModuleType.TRANSFER.getCode())
                 .setCreateTime(System.currentTimeMillis())
                 .setMsgType(MsgMeanType.INIT.getCode())
-                .setMsgBody(ByteString.copyFromUtf8(connectorId))
+                .setMsgBody(ByteString.copyFromUtf8(CONNECTOR_ID))
                 .build();
     }
 
     public static ChannelHandlerContext randomTransferCtx() {
         String netId = null;
+        int size = netIdList.size();
+        if(size == 0) {
+            return null;
+        }
         try{
             // Make the first transfer server the default server
             netId = netIdList.get(0);
         }catch (IndexOutOfBoundsException e) {
             return null;
         }
-        int size = netIdList.size();
         int index = (int)System.currentTimeMillis() % size;
         try{
             netId = netIdList.get(index);

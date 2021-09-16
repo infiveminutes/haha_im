@@ -1,0 +1,14 @@
+container:
+  redis:
+    host: localhost
+    port: 6379
+    prefix: "hahaim:user_status:"
+
+user_status:
+  redis:
+    host: localhost
+    port: 6379
+    prefix: "hahaim:user_status:"
+
+
+

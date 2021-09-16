@@ -3,16 +3,18 @@ package com.haha.im.cache;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 @Configuration
+@PropertySource( value = "classpath:application.yml")
 public class RedisConfig {
 
-    @Value("${redis.host}")
+    @Value("${user_status.redis.host}")
     private String host;
 
-    @Value("${redis.port}")
+    @Value("${user_status.redis.port}")
     private String port;
 
     @Bean
