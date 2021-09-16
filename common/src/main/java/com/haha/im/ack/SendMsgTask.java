@@ -1,6 +1,9 @@
 package com.haha.im.ack;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -10,9 +13,13 @@ import java.util.function.Consumer;
  * @param <T>
  */
 public class SendMsgTask<T> {
+
+    private static final Logger logger = LoggerFactory.getLogger(SendMsgTask.class);
+
     private T msg;
+    // need thread safe method
     private Consumer<T> consumer;
-    private long processTime;
+    private volatile long processTime;
     private CompletableFuture<T> future;
     private AtomicInteger retry;
     // only process once, if totalRetry is null,
@@ -23,6 +30,7 @@ public class SendMsgTask<T> {
         this.consumer = consumer;
         this.future = new CompletableFuture<>();
         this.totalRetry = totalRetry;
+        this.retry = new AtomicInteger(0);
     }
 
     public boolean process() {
@@ -32,7 +40,11 @@ public class SendMsgTask<T> {
         }
         if(retry.incrementAndGet()<=totalRetryTime) {
             processTime = System.currentTimeMillis();
-            consumer.accept(msg);
+            try{
+                consumer.accept(msg);
+            }catch (Exception e) {
+                logger.error("process error", e);
+            }
             return true;
         }else {
             return false;

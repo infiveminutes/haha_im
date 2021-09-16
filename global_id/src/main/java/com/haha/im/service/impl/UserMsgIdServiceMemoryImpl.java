@@ -89,17 +89,6 @@ public class UserMsgIdServiceMemoryImpl implements UserMsgIdService {
     }
 
     private ReentrantLock getLock(String userId) {
-        ReentrantLock userLock = userId2Lock.get(userId);
-        if(userLock == null) {
-            synchronized (lock) {
-                if(!userId2Lock.containsKey(userId)){
-                    userLock = new ReentrantLock();
-                    userId2Lock.put(userId, userLock);
-                }else {
-                    userLock = userId2Lock.get(userId);
-                }
-            }
-        }
-        return userLock;
+        return userId2Lock.computeIfAbsent(userId, x->new ReentrantLock());
     }
 }

@@ -11,10 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import java.util.Map;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -24,15 +22,17 @@ public class ServerAckWindow {
     private static final Logger logger = LoggerFactory.getLogger(ServerAckWindow.class);
 
     private static final ConcurrentHashMap<String, ServerAckWindow> netId2AckWindow;
-    private static final Executor executor;
+    private static final ExecutorService executor;
 
     static {
         netId2AckWindow = new ConcurrentHashMap<>();
         executor = Executors.newSingleThreadExecutor();
+        // start retry and clean task
+        executor.submit(ServerAckWindow::doRetryAndClean);
     }
 
     // todo need concurrentHashMap here?
-    private HashMap<String, SendMsgTask<Msg.InternalMsg>> reqId2Task;
+    private ConcurrentHashMap<String, SendMsgTask<Msg.InternalMsg>> reqId2Task;
     private Integer windowSize;
     private ReentrantLock lock;
     private Long timeout;  // millisecond
@@ -42,7 +42,7 @@ public class ServerAckWindow {
     public ServerAckWindow(String netId, Integer windowSize, Long timeout, Integer retry) {
         this.windowSize = windowSize;
         this.timeout = timeout;
-        this.reqId2Task = new HashMap<>();
+        this.reqId2Task = new ConcurrentHashMap<>();
         this.lock = new ReentrantLock();
         this.netId = netId;
         this.retry = retry;
@@ -95,4 +95,22 @@ public class ServerAckWindow {
     }
 
 
+    public static void doRetryAndClean() {
+        while(true) {
+            for(ServerAckWindow serverAckWindow: netId2AckWindow.values()) {
+                if(serverAckWindow.timeout == null) {
+                    continue;
+                }
+                for(Map.Entry<String, SendMsgTask<Msg.InternalMsg>> entry: serverAckWindow.reqId2Task.entrySet()) {
+                    if(serverAckWindow.timeout < System.currentTimeMillis() - entry.getValue().getProcessTime()) {
+                        // timeout, retry
+                        if(!entry.getValue().process()) {
+                            // Run out of retries
+                            serverAckWindow.reqId2Task.remove(entry.getKey());
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
