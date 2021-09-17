@@ -1,19 +1,16 @@
 package com.haha.im.codec;
 
 import com.google.protobuf.Message;
-import com.haha.im.parse.ParseService;
+import com.haha.im.parse.ParseMsgUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
 public class MsgDecoder extends ByteToMessageDecoder {
 
     /**
@@ -21,8 +18,7 @@ public class MsgDecoder extends ByteToMessageDecoder {
      * |     length      |  code(msg_type) |       msg            |
      */
 
-    @Autowired
-    private ParseService parseService;
+    private final ParseMsgUtil parseService = new ParseMsgUtil();
 
     private static final Logger logger = LoggerFactory.getLogger(MsgDecoder.class);
 

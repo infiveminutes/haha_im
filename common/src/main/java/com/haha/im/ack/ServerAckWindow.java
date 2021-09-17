@@ -47,7 +47,7 @@ public class ServerAckWindow {
 
     public CompletableFuture<Msg.InternalMsg> offer(Msg.InternalMsg msg, ChannelHandlerContext ctx) {
         CompletableFuture<Msg.InternalMsg> exceptionFuture = new CompletableFuture<>();
-        if(windowSize != null && reqId2Task.size() >= windowSize) {
+        if(windowSize == null || reqId2Task.size() >= windowSize) {
             exceptionFuture.completeExceptionally(new AckWindowFullException(netId));
             return exceptionFuture;
         }
@@ -101,11 +101,21 @@ public class ServerAckWindow {
                         // timeout, retry
                         if(!entry.getValue().process()) {
                             // Run out of retries
+                            entry.getValue().getFuture().completeExceptionally(new Exception("retry over time"));
                             serverAckWindow.reqId2Task.remove(entry.getKey());
                         }
                     }
                 }
             }
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                logger.error("doRetryAndClean error", e);
+            }
         }
+    }
+
+    public void closeExecutor() {
+        executor.shutdownNow();
     }
 }

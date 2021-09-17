@@ -4,18 +4,17 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import com.haha.im.model.enums.MsgType;
 import com.haha.im.model.protobuf.Msg;
-import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@Service
-public class ParseServiceImpl implements ParseService {
+
+public class ParseMsgUtil {
 
     private Map<MsgType, Parse> parseMap = new HashMap<>();
 
-    public ParseServiceImpl() {
+    public ParseMsgUtil() {
         parseMap.put(MsgType.CHAT, Msg.ChatMsg::parseFrom);
         parseMap.put(MsgType.ACK, Msg.AckMsg::parseFrom);
         parseMap.put(MsgType.INTERNAL, Msg.InternalMsg::parseFrom);

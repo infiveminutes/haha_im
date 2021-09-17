@@ -229,4 +229,8 @@ public class HttpClientUtil {
 
     }
 
+    public static void main(String[] args) {
+        System.out.println(doHttpPost("http://localhost:8088/msg_id/next_id", "{\"userId\":1}"));
+    }
+
 }
