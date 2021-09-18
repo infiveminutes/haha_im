@@ -22,15 +22,15 @@ public class ClientConnectorHandler extends SimpleChannelInboundHandler<Message>
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Message message) throws Exception {
         if(message.getClass().equals(Msg.AckMsg.class)) {
-            userClient.ackChat((Msg.AckMsg)message);
+            userClient.getAckMsg((Msg.AckMsg)message);
         }else if(message.getClass().equals(Msg.InternalMsg.class)) {
             Msg.InternalMsg internalMsg = (Msg.InternalMsg)message;
             if(internalMsg.getMsgType() != MsgMeanType.ACK.getCode()) {
                 return;
             }
-            userClient.ackInit((Msg.InternalMsg)message);
-        }else {
-            logger.error("channelRead0, can't handle this msg, "+message.getClass().toString());
+            userClient.getInitAckMsg((Msg.InternalMsg)message);
+        }else if(message.getClass().equals(Msg.ChatMsg.class)) {
+            userClient.ackChat((Msg.ChatMsg) message);
         }
     }
 

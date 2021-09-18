@@ -22,24 +22,36 @@ public class UserClient {
     private static final String MSG_ID = "msgId";
     private static final String GET_NEXT_MSG_ID_UTL = "http://localhost:8088/msg_id/next_id";
 
-    private final Long userId;
+    private Long userId;
     private ChannelHandlerContext ctx;
     private boolean connectStatus;
     private ClientAckWindow clientAckWindow;
     private ServerAckWindow serverAckWindow;
     private ExecutorService executorService;
+    private Long timeout;
 
 
-    public UserClient(Long userId, Integer retry, Integer windowSize, Long timeout) {
-        this.userId = userId;
+    public UserClient(Integer retry, Integer windowSize, Long timeout) {
         this.connectStatus = true;
         this.clientAckWindow = new ClientAckWindow("client", windowSize, timeout, retry);
         this.serverAckWindow = new ServerAckWindow("client", windowSize, timeout, retry);
         this.executorService = Executors.newSingleThreadExecutor();
+        this.timeout = timeout;
     }
 
     public void setCtx(ChannelHandlerContext ctx) {
         this.ctx = ctx;
+    }
+
+    public boolean login(String userName, String passwd) {
+        // todo 登录获取用户id
+        this.userId = 1L;
+        try{
+            this.userId = Long.parseLong(userName);
+        }catch (Exception e) {
+            logger.error("login error", e);
+        }
+        return true;
     }
 
     public void sendMsg(long destId, String msg) {
@@ -64,14 +76,18 @@ public class UserClient {
     }
 
     private boolean checkConnect() {
-        return connectStatus;
+        return userId!=null && connectStatus;
     }
 
     public boolean connect() {
+        if(userId == null) {
+            logger.error("connect error userId is null");
+            return false;
+        }
         Msg.InternalMsg msg = buildInitMsg();
         CompletableFuture<Msg.InternalMsg> future = serverAckWindow.offer(msg, ctx);
         try {
-            Msg.InternalMsg result = future.get(2000, TimeUnit.MILLISECONDS);
+            Msg.InternalMsg result = future.get(timeout==null?2000L:timeout, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
             logger.error("connect error", e);
             return false;
@@ -79,12 +95,22 @@ public class UserClient {
         return true;
     }
 
-    public void ackChat(Msg.AckMsg ackMsg) {
+    public void ackChat(Msg.ChatMsg chatMsg) {
+        Msg.AckMsg ackMsg = buildAckMsg(chatMsg.getDestId(), chatMsg.getId());
+        chatHandler(chatMsg);
+        ctx.writeAndFlush(ackMsg);
+    }
+
+    public void getAckMsg(Msg.AckMsg ackMsg) {
         clientAckWindow.ack(ackMsg);
     }
 
-    public void ackInit(Msg.InternalMsg internalMsg) {
+    public void getInitAckMsg(Msg.InternalMsg internalMsg) {
         serverAckWindow.ack(internalMsg);
+    }
+
+    private void chatHandler(Msg.ChatMsg chatMsg) {
+        logger.info(String.format("get chat msg----------id:%s--------fromId:%s-------destId:%s----------msg:%s----------", chatMsg.getId(), chatMsg.getFromId(), chatMsg.getDestId(), chatMsg.getMsgBody().toStringUtf8()));
     }
 
 
@@ -96,6 +122,17 @@ public class UserClient {
                 .setDestId(destId)
                 .setStep(0)
                 .setMsgBody(ByteString.copyFromUtf8(msg))
+                .build();
+    }
+
+    private Msg.AckMsg buildAckMsg(long destId, long ackMsgId) {
+        return Msg.AckMsg.newBuilder()
+                .setId(IDGenService.getSnowFlakeId())
+                .setCreateTime(System.currentTimeMillis())
+                .setFromId(userId)
+                .setDestId(destId)
+                .setStep(0)
+                .setAckMsgId(ackMsgId)
                 .build();
     }
 

@@ -15,7 +15,7 @@ import java.io.InputStreamReader;
 
 public class main {
     public static void main(String[] args) {
-        UserClient userClient = new UserClient(1L, 3, 3, 300000L);
+        UserClient userClient = new UserClient(3, 3, 300000L);
         ClientConnectorHandler clientConnectorHandler = new ClientConnectorHandler(userClient);
         EventLoopGroup group = new NioEventLoopGroup();
         try {
@@ -39,6 +39,17 @@ public class main {
 
             userClient.connect();
             BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+            // login
+            System.out.println("please enter userName:");
+            String userName = in.readLine();
+            System.out.println("please enter userName:");
+            String passwd = in.readLine();
+            if(!userClient.login(userName, passwd)) {
+                throw new Exception("login fail");
+            }
+            if(!userClient.connect()) {
+                throw new Exception("connect fail");
+            }
             for (; ; ) {
                 String line = in.readLine();
                 if (line == null) {
