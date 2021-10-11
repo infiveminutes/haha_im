@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 @PropertySource( value = "classpath:application.yml")
 public class RedisUserStatusServiceImpl implements UserStatusService {
 
+    public static final String NULL_STR = "null";
+
     @Value("${user_status.redis.prefix}")
     private String redisPrefix;
 
@@ -38,9 +40,13 @@ public class RedisUserStatusServiceImpl implements UserStatusService {
 
     public String getConnectorId(String userId) {
         if(StringUtils.isBlank(userId)) {
-            return "";
+            return null;
         }
         String key = redisPrefix + userId;
-        return redisClient.get(key);
+        String ret = redisClient.get(key);
+        if(NULL_STR.equals(ret)) {
+            return null;
+        }
+        return ret;
     }
 }

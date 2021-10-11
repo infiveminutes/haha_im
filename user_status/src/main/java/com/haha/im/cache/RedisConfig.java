@@ -8,7 +8,7 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 @Configuration
-@PropertySource( value = "classpath:application.yml")
+@PropertySource( value = "classpath:application.properties")
 public class RedisConfig {
 
     @Value("${user_status.redis.host}")

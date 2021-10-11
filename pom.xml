@@ -16,6 +16,7 @@
         <module>transfer</module>
         <module>global_id</module>
         <module>client</module>
+        <module>msg_repository</module>
     </modules>
 
     <properties>

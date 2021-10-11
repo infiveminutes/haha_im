@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AckMsgHandlerServiceImpl extends ChatMsgHandlerServiceImpl {
-
     private static final Logger logger = LoggerFactory.getLogger(AckMsgHandlerServiceImpl.class);
 
     @Override
@@ -18,5 +17,10 @@ public class AckMsgHandlerServiceImpl extends ChatMsgHandlerServiceImpl {
 
     public Class<? extends Message> handleMsgClazz() {
         return Msg.AckMsg.class;
+    }
+
+    @Override
+    protected void handleOffline(Message msg) {
+        logger.error("handleOffline error, user offline");
     }
 }

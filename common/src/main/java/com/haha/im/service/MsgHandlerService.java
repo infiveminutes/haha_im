@@ -20,6 +20,6 @@ public interface MsgHandlerService {
      * @param msg
      * @return true if pass the check
      */
-    boolean checkStep(Message msg);
+    Message checkStep(Message msg);
 
 }

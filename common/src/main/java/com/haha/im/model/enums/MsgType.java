@@ -1,5 +1,8 @@
 package com.haha.im.model.enums;
 
+import com.google.protobuf.Message;
+import com.haha.im.model.protobuf.Msg;
+
 public enum MsgType {
     CHAT(0, "消息"),
     ACK(1, "回复"),
@@ -29,6 +32,18 @@ public enum MsgType {
             }
         }
         return null;
+    }
+
+    public static MsgType clazz2Enum(Class<?> clazz) {
+        if(clazz == Msg.ChatMsg.class) {
+            return CHAT;
+        }else if(clazz == Msg.AckMsg.class) {
+            return ACK;
+        }else if(clazz == Msg.InternalMsg.class) {
+            return INTERNAL;
+        }else {
+            return null;
+        }
     }
 
 }

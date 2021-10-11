@@ -3,9 +3,9 @@ package com.haha.im.service.impl;
 import com.google.protobuf.Message;
 import com.haha.im.connect.Connect;
 import com.haha.im.connect.ConnectManager;
-import com.haha.im.handler.ConnectorTransferHandler;
 import com.haha.im.model.Proto;
 import com.haha.im.model.protobuf.Msg;
+import com.haha.im.mq.Producer;
 import com.haha.im.service.AbstractMsgHandlerService;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
@@ -21,10 +21,13 @@ public class ChatMsgHandlerServiceImpl extends AbstractMsgHandlerService {
     @Autowired
     private ConnectManager connectManager;
 
+    @Autowired
+    private Producer producer;
+
     /**
      * handle chatMsg
-     * if dest conn in this server, send the chat to dest
-     * else send the chat to transfer
+     * if target user is online forward msg to connector
+     * else put the chatMsg into mq and persist it
      * @param msg extend message.ack
      * @return
      */
@@ -33,22 +36,20 @@ public class ChatMsgHandlerServiceImpl extends AbstractMsgHandlerService {
         if(msg == null) {
             return Proto.creatError("step over limit");
         }
-        String destId = getDestId(msg);
-        Connect connect = connectManager.getConn(destId);
-        if(connect == null) {
-            // dest user's conn isn't in this machine, send the chat msg to transfer server
-            ChannelHandlerContext randomCtx = ConnectorTransferHandler.randomTransferCtx();
-            if(randomCtx == null) {
-                logger.error("transfer connect list is empty, can't send chat msg to transfer server, {}", msg);
-                return Proto.creatError("transfer connect list is empty");
-            }
-            randomCtx.channel().writeAndFlush(msg);
-            return Proto.OK;
-        }else {
-            // dest user's conn is in this machine, send chat to dest user
-            connect.sendMsg(msg);
+        String userId = getDestId(msg);
+        Connect connectorConn = connectManager.getConn(String.valueOf(userId));
+        if(connectorConn == null) {
+            // dest user is offline
+            handleOffline(msg);
+        }else{
+            // dest user if online, send chatMsg to target connector
+            connectorConn.sendMsg(msg);
         }
         return Proto.OK;
+    }
+
+    protected void handleOffline(Message msg) {
+        producer.send(msg);
     }
 
     protected String getDestId(Message msg) {
@@ -58,4 +59,5 @@ public class ChatMsgHandlerServiceImpl extends AbstractMsgHandlerService {
     public Class<? extends Message> handleMsgClazz() {
         return Msg.ChatMsg.class;
     }
+
 }

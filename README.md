@@ -11,4 +11,6 @@
 - [ ] 加一个注册模块, 用户connector及transfer的注册和发现
 - [ ] global_id多机部署
 - [ ] user_status做成服务
+- [ ] 用户下线没有在connector服务中清理掉连接及userStatus中修改用户上线状态
+- [ ] MemoryConnectManager不是线程安全的，因为内部有两个concurrentHashMap
 
