@@ -12,15 +12,15 @@ import java.util.Optional;
 
 public class ParseMsgUtil {
 
-    private Map<MsgType, Parse> parseMap = new HashMap<>();
+    private static Map<MsgType, Parse> parseMap = new HashMap<>();
 
-    public ParseMsgUtil() {
+    static {
         parseMap.put(MsgType.CHAT, Msg.ChatMsg::parseFrom);
         parseMap.put(MsgType.ACK, Msg.AckMsg::parseFrom);
         parseMap.put(MsgType.INTERNAL, Msg.InternalMsg::parseFrom);
     }
 
-    public Message parse(int code, byte[] bytes) throws InvalidProtocolBufferException {
+    public static Message parse(int code, byte[] bytes) throws InvalidProtocolBufferException {
         MsgType type = MsgType.code2Enum(code);
         if(type == null) {
             return null;

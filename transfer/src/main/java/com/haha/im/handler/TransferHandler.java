@@ -2,6 +2,7 @@ package com.haha.im.handler;
 
 import com.google.protobuf.Message;
 import com.haha.im.service.MsgConsumerService;
+import com.haha.im.utils.ThreadPools;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,8 @@ public class TransferHandler extends SimpleChannelInboundHandler<Message> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Message msg) throws Exception {
-        msgConsumerService.process(msg, ctx);
+        ThreadPools.submitTask(()->{
+            msgConsumerService.process(msg, ctx);
+        });
     }
 }

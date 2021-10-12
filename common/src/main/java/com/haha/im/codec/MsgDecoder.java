@@ -18,8 +18,6 @@ public class MsgDecoder extends ByteToMessageDecoder {
      * |     length      |  code(msg_type) |       msg            |
      */
 
-    private final ParseMsgUtil parseService = new ParseMsgUtil();
-
     private static final Logger logger = LoggerFactory.getLogger(MsgDecoder.class);
 
     @Override
@@ -45,7 +43,7 @@ public class MsgDecoder extends ByteToMessageDecoder {
             int code = byteBuf.readInt();
             ByteBuf bf = Unpooled.buffer(length);
             byteBuf.readBytes(bf);
-            Message msg = parseService.parse(code, bf.array());
+            Message msg = ParseMsgUtil.parse(code, bf.array());
             list.add(msg);
         }catch (Exception e) {
             logger.error("decode error", e);
