@@ -1,5 +1,6 @@
 package com.haha.im.service.impl;
 
+import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
 import com.haha.im.connect.Connect;
 import com.haha.im.connect.ConnectManager;
@@ -9,6 +10,7 @@ import com.haha.im.model.enums.ModuleType;
 import com.haha.im.model.enums.MsgMeanType;
 import com.haha.im.model.protobuf.Msg;
 import com.haha.im.service.MsgHandlerService;
+import com.haha.im.utils.IDGenService;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -57,5 +59,18 @@ public class InternalMsgHandlerServiceImpl implements MsgHandlerService {
         }
         Connect connect = new ServerNettyChannelConnect(connectorId, ctx);
         connectManager.addConn(connect);
+        Msg.InternalMsg ackMsg = genAck(String.valueOf(internalMsg.getId()));
+        ctx.writeAndFlush(ackMsg);
+    }
+
+    private Msg.InternalMsg genAck(String msgId) {
+        return Msg.InternalMsg.newBuilder()
+                .setId(IDGenService.getSnowFlakeId())
+                .setFrom(ModuleType.TRANSFER.getCode())
+                .setDest(ModuleType.CONNECTOR.getCode())
+                .setCreateTime(System.currentTimeMillis())
+                .setMsgType(MsgMeanType.ACK.getCode())
+                .setMsgBody(ByteString.copyFromUtf8(msgId))
+                .build();
     }
 }

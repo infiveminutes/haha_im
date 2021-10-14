@@ -7,6 +7,7 @@ import com.haha.im.service.MsgHandlerService;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class MsgConsumerServiceImpl implements MsgConsumerService {
+public class MsgConsumerServiceImpl implements MsgConsumerService, InitializingBean {
     private static final Logger logger = LoggerFactory.getLogger(MsgConsumerServiceImpl.class);
 
     @Autowired
@@ -50,9 +51,10 @@ public class MsgConsumerServiceImpl implements MsgConsumerService {
     public Proto process(Message msg, ChannelHandlerContext ctx) {
         if(!checkMsg(msg)) {
             // handler not defined
-            logger.error("process, not found msg type, {}", msg);
+            logger.error("process, not found msg type, class:{}, {}", msg.getClass(), msg);
             return Proto.ERROR;
         }
+        logger.info("transfer recv msg {}: {}", msg.getClass(), msg.toString());
         return msgClazz2handler.get(msg.getClass()).handleMsg(msg, ctx);
     }
 }

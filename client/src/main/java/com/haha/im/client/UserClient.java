@@ -96,7 +96,7 @@ public class UserClient {
     }
 
     public void ackChat(Msg.ChatMsg chatMsg) {
-        Msg.AckMsg ackMsg = buildAckMsg(chatMsg.getDestId(), chatMsg.getId());
+        Msg.AckMsg ackMsg = buildAckMsg(chatMsg.getFromId(), chatMsg.getId());
         chatHandler(chatMsg);
         ctx.writeAndFlush(ackMsg);
     }

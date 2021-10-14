@@ -5,6 +5,6 @@ import org.springframework.context.annotation.PropertySource;
 
 
 @ComponentScan(value = "com.haha.im")
-@PropertySource( value = "classpath:application.yml")
+@PropertySource( value = "classpath:application.properties")
 public class TransferIocConfig {
 }

@@ -1,6 +1,7 @@
 package com.haha.im;
 
 import com.haha.im.ioc.ConnectorIocConfig;
+import com.haha.im.start.Connect2TransferServer;
 import com.haha.im.start.ConnectorServer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -10,5 +11,6 @@ public class main {
         ApplicationContext applicationContext =
                 new AnnotationConfigApplicationContext(ConnectorIocConfig.class);
         ConnectorServer.start(9098, applicationContext);
+        Connect2TransferServer.start(applicationContext);
     }
 }

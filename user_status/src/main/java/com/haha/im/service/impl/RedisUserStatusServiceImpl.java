@@ -9,7 +9,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 @Service
-@PropertySource( value = "classpath:application.yml")
+@PropertySource( value = "classpath:application.properties")
 public class RedisUserStatusServiceImpl implements UserStatusService {
 
     public static final String NULL_STR = "null";

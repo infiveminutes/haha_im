@@ -35,7 +35,7 @@ public class main {
                     });
 
             // Start the connection attempt.
-            Channel ch = b.connect("localhost", 9098).sync().channel();
+            Channel ch = b.connect("localhost", 9099).sync().channel();
 
             userClient.connect();
             BufferedReader in = new BufferedReader(new InputStreamReader(System.in));

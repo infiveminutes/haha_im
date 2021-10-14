@@ -77,14 +77,21 @@ public class ClientAckWindow {
     }
 
     private void doRetryAndClean() {
-        for(Map.Entry<String, SendMsgTask<Msg.ChatMsg>> entry: reqId2Task.entrySet()) {
-            if(timeout < System.currentTimeMillis() - entry.getValue().getProcessTime()) {
-                // timeout, retry
-                if(!entry.getValue().process()) {
-                    // Run out of retries
-                    entry.getValue().getFuture().completeExceptionally(new Exception("retry over time"));
-                    reqId2Task.remove(entry.getKey());
+        while(true) {
+            for (Map.Entry<String, SendMsgTask<Msg.ChatMsg>> entry : reqId2Task.entrySet()) {
+                if (timeout < System.currentTimeMillis() - entry.getValue().getProcessTime()) {
+                    // timeout, retry
+                    if (!entry.getValue().process()) {
+                        // Run out of retries
+                        entry.getValue().getFuture().completeExceptionally(new Exception("retry over time"));
+                        reqId2Task.remove(entry.getKey());
+                    }
                 }
+            }
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                logger.error("doRetryAndClean error", e);
             }
         }
     }
